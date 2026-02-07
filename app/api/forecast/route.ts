@@ -132,15 +132,18 @@ export async function GET() {
 
       // Calculate max risk for each beach this day
       const dayBeachRisks = BEACHES.map((beach) => {
-        const maxRisk = dayHours.reduce((max, h) => {
+        let maxRisk = { level: 'BAJO' as string, color: '#22C55E', emoji: '🟢', description: '', score: 0 };
+        for (const h of dayHours) {
           const r = calculateRisk(
             beach,
             h.swell,
             h.tideHeight ?? 0.5,
             moon.tidalEffect
           );
-          return r.score > max.score ? r : max;
-        }, { level: 'BAJO' as const, color: '#22C55E', emoji: '🟢', description: '', score: 0 });
+          if (r.score > maxRisk.score) {
+            maxRisk = { level: r.level, color: r.color, emoji: r.emoji, description: r.description, score: r.score };
+          }
+        }
         return { name: beach.name, risk: maxRisk };
       });
 
