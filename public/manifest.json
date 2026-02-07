@@ -1,0 +1,21 @@
+{
+  "name": "Alerta Marejadas — Bahía de Banderas",
+  "short_name": "Marejadas",
+  "description": "Predicción de riesgo de inundación en playas de Bahía de Banderas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0C1222",
+  "theme_color": "#0C1222",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
