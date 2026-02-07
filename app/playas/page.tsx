@@ -35,12 +35,44 @@ function ExposureBadge({ label, value }: { label: string; value: string }) {
     MEDIA: 'bg-yellow-900/50 text-yellow-300',
     BAJA: 'bg-green-900/50 text-green-300',
   };
+
+  const tooltips: Record<string, Record<string, string>> = {
+    'Exp. NW': {
+      'MUY ALTA': 'Playa muy expuesta al oleaje del Noroeste (Pacífico Norte/Bering). Mayor riesgo en invierno (Nov-Abr).',
+      'ALTA': 'Playa expuesta al oleaje del Noroeste. Riesgo significativo en temporada invernal.',
+      'MEDIA': 'Exposición moderada al oleaje del Noroeste.',
+      'BAJA': 'Playa protegida del oleaje del Noroeste por la curvatura de la bahía.',
+    },
+    'Exp. SW': {
+      'MUY ALTA': 'Playa muy expuesta al oleaje del Suroeste (tormentas tropicales/huracanes). Mayor riesgo en verano (May-Oct).',
+      'ALTA': 'Playa expuesta al oleaje del Suroeste. Riesgo significativo en temporada de lluvias.',
+      'MEDIA': 'Exposición moderada al oleaje del Suroeste.',
+      'BAJA': 'Playa protegida del oleaje del Suroeste por Cabo Corrientes.',
+    },
+  };
+
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltip = tooltips[label]?.[value] || '';
+
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-400">{label}:</span>
-      <span className={`text-xs font-semibold px-2 py-0.5 rounded ${colors[value] || 'bg-gray-700 text-gray-300'}`}>
-        {value}
-      </span>
+    <div className="relative">
+      <button
+        onClick={() => setShowTooltip(!showTooltip)}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        className="flex items-center gap-2 cursor-pointer"
+      >
+        <span className="text-xs text-gray-400">{label}:</span>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded ${colors[value] || 'bg-gray-700 text-gray-300'}`}>
+          {value} {(value === 'MUY ALTA' || value === 'ALTA') ? 'ⓘ' : ''}
+        </span>
+      </button>
+      {showTooltip && tooltip && (
+        <div className="absolute z-10 bottom-full left-0 mb-2 w-64 bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs text-gray-300 shadow-lg">
+          {tooltip}
+          <div className="absolute top-full left-4 w-2 h-2 bg-gray-900 border-r border-b border-gray-700 transform rotate-45 -mt-1" />
+        </div>
+      )}
     </div>
   );
 }
@@ -123,7 +155,7 @@ export default function PlayasPage() {
       </div>
 
       <footer className="text-center text-gray-600 text-xs py-4">
-        Hecho por duendes.app 2026
+        Hecho por duendes.app 2026 para Chelunguis
       </footer>
     </main>
   );
