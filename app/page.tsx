@@ -301,11 +301,19 @@ export default function HomePage() {
 
   return (
     <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
-      {/* Header */}
-      <header className="text-center">
-        <h1 className="text-xl font-bold">🌊 Alerta Marejadas</h1>
-        <p className="text-gray-400 text-sm">Bahía de Banderas</p>
-      </header>
+      {/* Hero */}
+      <div className="relative w-full h-56 overflow-hidden rounded-b-2xl -mt-6 -mx-4 mb-4" style={{ width: 'calc(100% + 2rem)' }}>
+        <img
+          src="/bg-beach.jpg"
+          alt="Playa de los Muertos — Marejada"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0C1222]/40 via-transparent to-[#0C1222]" />
+        <div className="absolute bottom-4 left-4 right-4">
+          <h1 className="text-2xl font-bold drop-shadow-lg">🌊 Alerta Marejadas</h1>
+          <p className="text-gray-200 text-sm drop-shadow">Bahía de Banderas</p>
+        </div>
+      </div>
 
       {/* Risk Gauge */}
       <RiskGauge
