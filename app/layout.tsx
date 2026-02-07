@@ -28,8 +28,20 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="bg-[#0C1222] text-white min-h-screen">
-        {children}
+      <body className="bg-[#0C1222] text-white min-h-screen relative">
+        <div
+          className="fixed inset-0 z-0"
+          style={{
+            backgroundImage: 'url(/bg-beach.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+          }}
+        />
+        <div className="fixed inset-0 z-0 bg-[#0C1222]/75 backdrop-blur-[2px]" />
+        <div className="relative z-10">
+          {children}
+        </div>
         <script
           dangerouslySetInnerHTML={{
             __html: `
