@@ -385,7 +385,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="text-center text-gray-600 text-xs py-4">
-        <p>Hecho por duendes.app 2026</p>
+        <p>Hecho por duendes.app 2026 para Chelunguis</p>
         <p className="mt-1">
           Actualizado:{' '}
           {new Date(data.timestamp).toLocaleString('es-MX', {
