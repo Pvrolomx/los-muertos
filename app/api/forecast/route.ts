@@ -6,7 +6,7 @@ import type { SwellData, ForecastHour } from '@/lib/riskCalculator';
 
 // In-memory cache
 let cachedData: { data: unknown; timestamp: number } | null = null;
-const CACHE_DURATION = 6 * 60 * 60 * 1000; // 6 hours
+const CACHE_DURATION = 1 * 60 * 60 * 1000; // 1 hour
 
 async function fetchOpenMeteoMarine() {
   const params = new URLSearchParams({
@@ -26,7 +26,7 @@ async function fetchOpenMeteoMarine() {
 
   const res = await fetch(
     `https://marine-api.open-meteo.com/v1/marine?${params.toString()}`,
-    { next: { revalidate: 21600 } }
+    { next: { revalidate: 3600 } }
   );
 
   if (!res.ok) {
