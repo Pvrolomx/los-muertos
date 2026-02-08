@@ -465,14 +465,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Dynamic Bay Map */}
-      <BayMap
-        beaches={data.beaches}
-        swellDirection={data.current.swell.direction}
-        swellHeight={data.current.swell.height}
-        overallScore={data.overallRisk.score}
-      />
-
       {/* Risk Gauge */}
       <RiskGauge
         score={data.overallRisk.score}
