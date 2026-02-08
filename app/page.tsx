@@ -223,6 +223,156 @@ function DailySummary({ days }: { days: ForecastData['dailySummary'] }) {
   );
 }
 
+function BayMap({
+  beaches,
+  swellDirection,
+  swellHeight,
+  overallScore,
+}: {
+  beaches: BeachRisk[];
+  swellDirection: number;
+  swellHeight: number;
+  overallScore: number;
+}) {
+  // Map beach positions to SVG coordinates (approximate Bahía de Banderas shape)
+  const beachPositions: Record<string, { x: number; y: number }> = {
+    'Los Muertos': { x: 82, y: 88 },
+    'Olas Altas': { x: 78, y: 84 },
+    'Malecón': { x: 75, y: 80 },
+    'Camarones': { x: 72, y: 72 },
+    'Nuevo Vallarta': { x: 60, y: 52 },
+    'Bucerías': { x: 48, y: 38 },
+    'La Cruz': { x: 42, y: 34 },
+    'Sayulita': { x: 22, y: 18 },
+    'Punta Mita': { x: 28, y: 28 },
+  };
+
+  // Swell color based on intensity
+  const swellColor =
+    overallScore >= 70
+      ? '#DC2626'
+      : overallScore >= 50
+      ? '#F97316'
+      : overallScore >= 30
+      ? '#EAB308'
+      : '#3B82F6';
+
+  const swellOpacity = Math.min(0.8, 0.2 + (swellHeight / 3) * 0.6);
+
+  // Direction arrow for swell
+  const isNW = swellDirection >= 270 && swellDirection <= 330;
+  const isSW = swellDirection >= 150 && swellDirection <= 240;
+  const dirLabel = isNW ? 'NW' : isSW ? 'SW' : `${Math.round(swellDirection)}°`;
+
+  // Wave animation lines based on direction
+  const waveAngle = swellDirection - 180; // incoming direction
+  const rad = (waveAngle * Math.PI) / 180;
+
+  return (
+    <div className="bg-gray-800/50 rounded-xl p-4">
+      <h3 className="text-lg font-semibold mb-2">🗺️ Bahía de Banderas — Swell en vivo</h3>
+      <div className="relative">
+        <svg viewBox="0 0 100 100" className="w-full" style={{ maxHeight: '280px' }}>
+          {/* Ocean background */}
+          <rect x="0" y="0" width="100" height="100" fill="#0a1628" rx="4" />
+
+          {/* Animated swell waves */}
+          {[0, 1, 2, 3, 4].map((i) => {
+            const offset = isNW ? { x1: 100, y1: 0, x2: 30, y2: 70 } :
+                           isSW ? { x1: 0, y1: 100, x2: 70, y2: 30 } :
+                                  { x1: 50, y1: 0, x2: 50, y2: 100 };
+            const progress = i * 20;
+            return (
+              <line
+                key={i}
+                x1={offset.x1}
+                y1={offset.y1 + progress * 0.3}
+                x2={offset.x2}
+                y2={offset.y2 + progress * 0.3}
+                stroke={swellColor}
+                strokeWidth="0.5"
+                opacity={swellOpacity * (1 - i * 0.15)}
+              >
+                <animate
+                  attributeName="opacity"
+                  values={`${swellOpacity * (1 - i * 0.15)};${swellOpacity * 0.3};${swellOpacity * (1 - i * 0.15)}`}
+                  dur={`${2 + i * 0.5}s`}
+                  repeatCount="indefinite"
+                />
+              </line>
+            );
+          })}
+
+          {/* Coastline shape (simplified Bahía de Banderas) */}
+          <path
+            d="M 15,10 Q 18,15 22,18 Q 28,24 28,28 Q 30,32 42,34 Q 48,36 48,38 Q 52,42 60,52 Q 64,58 72,72 Q 75,78 78,84 Q 80,86 82,88 Q 86,92 90,95 L 95,100 L 100,100 L 100,0 L 20,0 Z"
+            fill="#1a2744"
+            stroke="#2a3f66"
+            strokeWidth="0.5"
+          />
+
+          {/* Beach markers */}
+          {beaches.map((b) => {
+            const pos = beachPositions[b.name];
+            if (!pos) return null;
+            return (
+              <g key={b.name}>
+                {/* Risk glow */}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r="3"
+                  fill={b.risk.color}
+                  opacity="0.3"
+                >
+                  <animate
+                    attributeName="r"
+                    values="2;4;2"
+                    dur="3s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                {/* Dot */}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r="1.5"
+                  fill={b.risk.color}
+                  stroke="white"
+                  strokeWidth="0.3"
+                />
+                {/* Label */}
+                <text
+                  x={pos.x + 3}
+                  y={pos.y + 0.5}
+                  fill="white"
+                  fontSize="2.5"
+                  fontWeight="bold"
+                  opacity="0.9"
+                >
+                  {b.name}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Swell direction arrow */}
+          <g>
+            <text x="5" y="97" fill={swellColor} fontSize="3.5" fontWeight="bold">
+              Swell {dirLabel} {swellHeight.toFixed(1)}m
+            </text>
+            {/* Arrow showing direction */}
+            <g transform={`translate(${isNW ? 8 : isSW ? 8 : 8}, ${isNW ? 8 : isSW ? 92 : 50}) rotate(${waveAngle})`}>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke={swellColor} strokeWidth="1" />
+              <polygon points="0,-5 -1.5,-2 1.5,-2" fill={swellColor} />
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function InstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [showButton, setShowButton] = useState(false);
@@ -314,6 +464,14 @@ export default function HomePage() {
           <p className="text-gray-200 text-sm drop-shadow">Bahía de Banderas</p>
         </div>
       </div>
+
+      {/* Dynamic Bay Map */}
+      <BayMap
+        beaches={data.beaches}
+        swellDirection={data.current.swell.direction}
+        swellHeight={data.current.swell.height}
+        overallScore={data.overallRisk.score}
+      />
 
       {/* Risk Gauge */}
       <RiskGauge
